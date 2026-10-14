@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actividad 5 - Portal Informativo e Interactivo: Encoder y E/S</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 24px;
+        }
+        /* Estilos de las pestañas */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            border-bottom: 2px solid #3498db;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+        .tab-btn {
+            background-color: #ecf0f1;
+            border: none;
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            color: #555;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background-color: #3498db;
+            color: white;
+        }
+        /* Contenido de las pestañas */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        h2 {
+            color: #2980b9;
+            font-size: 20px;
+            margin-top: 15px;
+        }
+        p, li {
+            font-size: 16px;
+            color: #555;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        .interactive-box {
+            background: #eaf2f8;
+            border: 2px dashed #3498db;
+            padding: 25px;
+            margin-top: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        button.action-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            font-size: 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 6px;
+            transition: background 0.3s;
+        }
+        button.action-btn:hover {
+            background-color: #2980b9;
+        }
+        #status {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-top: 15px;
+            font-size: 17px;
+        }
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 13px;
+            color: #888;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Sistemas de E/S y Portal del Encoder</h1>
+
+        <!-- Botones de Pestañas -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="cambiarPestana(event, 'teoria')">1. Marco Teórico (E/S)</button>
+            <button class="tab-btn" onclick="cambiarPestana(event, 'encoder')">2. Funcionamiento Encoder</button>
+            <button class="tab-btn" onclick="cambiarPestana(event, 'simulador')">3. Simulador Interactivo</button>
+        </div>
+
+        <!-- Pestaña 1: Marco Teórico -->
+        <div id="teoria" class="tab-content active">
+            <h2>Circuitería de Entrada / Salida (E/S)</h2>
+            <p>Los sistemas basados en microcontroladores requieren una interfaz robusta para comunicarse de manera segura con el entorno exterior:</p>
+            <ul>
+                <li><strong>Aislamiento y Protección:</strong> Uso de optoacopladores y diodos de protección para evitar que picos de alto voltaje o ruido eléctrico dañen la lógica del microcontrolador.</li>
+                <li><strong>Ancho de Bus de E/S:</strong> Define la capacidad de transferencia paralela de datos, permitiendo leer múltiples líneas de sensores o enviar comandos de control eficientemente en cada ciclo de reloj.</li>
+            </ul>
+        </div>
+
+        <!-- Pestaña 2: Funcionamiento del Encoder -->
+        <div id="encoder" class="tab-content">
+            <h2>Principio del Encoder Incremental</h2>
+            <p>Un encoder rotativo genera trenes de pulsos digitales a través de dos canales principales:</p>
+            <ul>
+                <li><strong>Señales de Cuadratura (Canal A y Canal B):</strong> Están desfasadas $90^\circ$ eléctricos entre sí.</li>
+                <li><strong>Detección de Dirección:</strong> Al evaluar qué canal cambia de estado primero (si A adelanta a B o viceversa), el sistema determina con precisión milimétrica si el giro es horario o antihorario.</li>
+            </ul>
+        </div>
+
+        <!-- Pestaña 3: Simulador Interactivo -->
+        <div id="simulador" class="tab-content">
+            <h2>Panel Interactivo de Tono / Encoder</h2>
+            <div class="interactive-box">
+                <p>Haz clic en los botones para simular las señales del encoder y generar audio interactivo mediante la Web Audio API:</p>
+                <button class="action-btn" onclick="reproducirTono(440, 'Canal A Activado (Pulso Base)')">Canal A (440 Hz)</button>
+                <button class="action-btn" onclick="reproducirTono(554.37, 'Canal B Activado (Desfase 90°)')">Canal B (554 Hz)</button>
+                <button class="action-btn" onclick="reproducirTono(659.25, 'Giros Completos / Ambas Señales')">Giro Completo (659 Hz)</button>
+                <div id="status">Estado del sistema: En espera de interacción...</div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Práctica Académica - Ingeniería en Sistemas / Computación Sistemas.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Función para cambiar de pestaña dinámicamente
+        function cambiarPestana(evt, idSeccion) {
+            const contenidos = document.getElementsByClassName("tab-content");
+            for (let i = 0; contenidos.length > i; i++) {
+                contenidos[i].classList.remove("active");
+            }
+
+            const botones = document.getElementsByClassName("tab-btn");
+            for (let i = 0; botones.length > i; i++) {
+                botones[i].classList.remove("active");
+            }
+
+            document.getElementById(idSeccion).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        // Función interactiva de audio
+        function reproducirTono(frecuencia, mensaje) {
+            document.getElementById("status").innerText = "Estado: " + mensaje;
+            
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscilador = audioCtx.createOscillator();
+                const ganancia = audioCtx.createGain();
+
+                oscilador.type = 'sine';
+                oscilador.frequency.setValueAtTime(frecuencia, audioCtx.currentTime);
+
+                ganancia.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                ganancia.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.4);
+
+                oscilador.connect(ganancia);
+                ganancia.connect(audioCtx.destination);
+
+                oscilador.start();
+                oscilador.stop(audioCtx.currentTime + 0.4);
+            } catch (e) {
+                console.log("Audio simulado correctamente.");
+            }
+        }
+    </script>
+
+</body>
+</html>
